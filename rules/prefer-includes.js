@@ -1,5 +1,7 @@
 'use strict';
 
+const hasProp = (obj, prop) => obj && obj[prop];
+
 const isIndexOfCallExpression = node => {
 	if (node.type !== 'CallExpression') {
 		return false;
@@ -16,6 +18,10 @@ const isUnaryNotExpression = node => (
 
 const isNegativeOne = (operator, value) => operator === '-' && value === 1;
 
+// const isPlainString = pattern => {
+
+// }
+
 const getSourceCode = (context, node) => (
 	context.getSourceCode().text.slice(node.range[0], node.range[1])
 );
@@ -25,8 +31,17 @@ const report = (context, node, target, pattern) => {
 	const patternSource = getSourceCode(context, pattern);
 	context.report({
 		node,
-		message: 'Use `.includes()`, not .indexOf(), when checking for existence.',
+		message: 'Use `.includes()` when checking for existence.',
 		fix: fixer => fixer.replaceText(node, `${targetSource}.includes(${patternSource})`)
+	});
+};
+
+const reportRegex = (context, node, target, pattern) => {
+	const targetSource = getSourceCode(context, target);
+	context.report({
+		node,
+		message: 'Use `.includes()` when checking for existence.',
+		fix: fixer => fixer.replaceText(node, `${targetSource}.includes('${pattern}')`)
 	});
 };
 
@@ -105,7 +120,30 @@ const create = context => ({
 				return false;
 			}
 		}
-	}
+	},
+
+	// CallExpression: node => {
+	// 	const callee = node.callee;
+
+	// 	if (callee.type !== 'MemberExpression' || callee.property.name !== 'test') {
+	// 		return false;
+	// 	}
+
+	// 	const object = callee.object;
+
+	// 	if (object.type !== 'Literal' || !hasProp(object.regex, 'pattern')) {
+	// 		return false;
+	// 	}
+
+	// 	const target = node.arguments[0];
+	// 	const pattern = object.regex.pattern;
+
+	// 	if (!isPlainString(pattern)) {
+	// 		return false
+	// 	}
+
+	// 	reportRegex(context, node, target, pattern);
+	// }
 });
 
 module.exports = {

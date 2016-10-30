@@ -10,7 +10,7 @@ const ruleTester = avaRuleTester(test, {
 
 const errors = [{
 	ruleId: 'prefer-includes',
-	message: 'Use `.includes()`, not .indexOf(), when checking for existence.'
+	message: 'Use `.includes()` when checking for existence.'
 }];
 
 ruleTester.run('prefer-includes', rule, {
@@ -22,6 +22,7 @@ ruleTester.run('prefer-includes', rule, {
 		'str.includes(\'foo\')',
 		'\'foobar\'.includes(\'foo\')',
 		'[1,2,3].includes(4)',
+		// '/foo.*bar/.test(str)',
 		'"str.indexOf(\'foo\') !== -1"'
 	],
 	invalid: [
@@ -60,6 +61,11 @@ ruleTester.run('prefer-includes', rule, {
 			output: '\'foobar\'.includes(\'foo\')',
 			errors
 		},
+		// {
+		// 	code: '/foo/.test(str)',
+		// 	output: 'str.includes(\'foo\')',
+		// 	errors
+		// },
 		{
 			code: '[1,2,3].indexOf(4) !== -1',
 			output: '[1,2,3].includes(4)',
